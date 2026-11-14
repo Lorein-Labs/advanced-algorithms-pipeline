@@ -1,0 +1,103 @@
+# II. Cadres d'Analyse Algorithmique
+
+Pour une même taille d'entrée $n$, le temps d'exécution d'un même algorithme peut varier de façon significative selon la configuration intrinsèque des données elles-mêmes. Pour modéliser cette dynamique de performance, l'informatique théorique définit formellement trois types d'analyse basés sur l'espace de toutes les entrées possibles de taille $n$, noté $D_n$.
+
+## II.1 Analyse dans le meilleur des cas (Borne inférieure restrictive)
+
+Le coût minimal sur toutes les entrées de taille $n$ définit le meilleur des cas :
+$$T_{\min}(n) = \min \{ T(d) : d \in D_n \}$$
+
+C'est une borne inférieure, peu informative en pratique car elle correspond à une situation idéalement favorable, hautement improbable et rare.
+
+### Exemple de la recherche séquentielle :
+Soit la liste unitaire $L = [12, 25, 8, 40, 17]$. Si l'élément recherché est $12$, il est situé à la première position. L'algorithme s'arrête immédiatement après une seule comparaison. Le coût est indépendant de la taille $n$, s'établissant à la borne restrictive $\Theta(1)$.
+
+## II.2 Analyse dans le pire des cas (Garantie de performance industrielle)
+
+Le coût maximal sur toutes les entrées de taille $n$ définit le pire des cas :
+$$T_{\max}(n) = \max \{ T(d) : d \in D_n \}$$
+
+C'est la mesure de référence incontournable en ingénierie logicielle car elle fournit une **garantie absolue** : le système ne dépassera jamais ce seuil de ressources, ce qui est vital pour la tolérance aux pannes des services de communication distribués.
+
+### Exemple de la recherche séquentielle :
+Si l'élément recherché est $17$ ou absent dans la liste $L$, l'algorithme doit inspecter séquentiellement les $n$ éléments. Le coût croît linéairement avec la taille du problème, s'établissant à la borne $\Theta(n)$.
+
+## II.3 Analyse du cas moyen (Calculs de probabilités et d'espérance)
+
+La complexité en cas moyen est la moyenne pondérée par la probabilité d'occurrence de chaque entrée de taille $n$ :
+$$T_{\text{moyen}}(n) = \sum_{d \in D_n} P(d) \cdot T(d)$$
+
+Elle exige de connaître la distribution statistique des données d'entrée (généralement supposée uniforme) ; son calcul s'avère mathématiquement plus complexe.
+
+### Exemple de la recherche séquentielle :
+Le nombre moyen de comparaisons s'évalue par le calcul d'espérance :
+$$C(n) = \frac{1 + 2 + \dots + n}{n} = \frac{\frac{n(n + 1)}{2}}{n} = \frac{n + 1}{2} \approx \frac{n}{2} \implies \Theta(n)$$
+
+## II.4 Étude de cas : Le Tri par Insertion
+
+Pour valider l'impact de ces cadres d'analyse, étudions le comportement macro-économique du Tri par Insertion formulé selon les standards algorithmiques du module.
+
+Pour faciliter la compréhension géométrique du déplacement des clés pour les étudiants de l'Université de Dschang, le diagramme structurel ci-dessous retrace la mécanique d'échange :
+
+```{mermaid}
+%%| fig-width: 6
+%%| fig-align: center
+graph TD
+    subgraph "Meilleur cas : 1, 2, 3, 4, 5"
+        A1[1] --- A2[2] --- A3[3] --- A4[4] --- A5[5]
+    end   
+```
+
+
+
+**Pire cas** — tableau trié à l'envers `[5, 4, 3, 2, 1]`, itération $i = 3$ :
+
+| Étape | Tableau | $x$ | Comparaison | Shift |
+|:---:|:---:|:---:|:---:|:---:|
+| init | [5, 4, **3**, 2, 1] | 3 | — | — |
+| 1 | [5, 4, 4, 2, 1] | 3 | 4 > 3 ✓ | $T[3] \leftarrow T[2]$ |
+| 2 | [5, 5, 4, 2, 1] | 3 | 5 > 3 ✓ | $T[2] \leftarrow T[1]$ |
+| 3 | [3, 5, 4, 2, 1] | 3 | $j=0$, stop | $T[1] \leftarrow x$ |
+
+→ **3 comparaisons**, **2 shifts** pour un seul élément.   
+
+
+
+Le pseudo-code impératif standardisé associé s'isole de façon totalement étanche au sein de la fente sémantique suivante :
+
+```{.pseudocode title="TRI-INSERTION(T, n)" line-numbering="1"}
++ *procédure* [Tri-Insertion]{.smallcaps} ($T$, $n$)
+  + *entrée* : Un tableau T de taille n
+  + *sortie* : Le tableau T trié en place
+  + *pour* $i \leftarrow 2$ *à* n *faire*
+    + $x \leftarrow T[i]$
+    + $j \leftarrow i - 1$
+    + *tant que* $j ≥ 1$ *et* $(T[j] > x$) *faire*
+      + $T[j + 1] \leftarrow T[j]$
+      + $j \leftarrow j - 1$
+    + *fintantque*
+    + $T[j + 1] \leftarrow x$
+  + *finpour*
+```
+
+### II.4.1 Analyse Mathématique Fine des Coûts Opératoires
+L'évaluation du nombre de comparaisons de cet algorithme de tri reveals des ordres de grandeurs hétérogènes selon la configuration intrinsèque du tableau initial :
+
+*   **Meilleur cas (Tableau déjà trié) :** La condition de la boucle `TantQue` échoue immédiatement à chaque itération. La boucle interne n'exécute qu'une seule comparaison par passage. Le coût total est linéaire :
+    $$T(n) = n - 1 \;\Rightarrow\; \Theta(n)$$
+*   **Pire cas (Tableau trié à l'envers) :** L'élément courant $x$ doit être comparé et déplacé jusqu'au début absolu du tableau à chaque étape. Le nombre de comparaisons est maximal et suit la somme arithmétique :
+    $$\sum_{i=2}^{n}(i - 1) = \frac{n(n - 1)}{2} \;\Rightarrow\; \Theta(n^{2})$$
+*   **Cas moyen (Permutation aléatoire des clés) :** En moyenne, l'élément courant parcourt statistiquement la moitié du sous-tableau déjà trié. Le coût opératoire se stabilise à la borne :
+    $$\frac{n(n - 1)}{4} \;\Rightarrow\; \Theta(n^{2})$$
+
+### Matrice de synthèse des cadres d'analyse :
+
+| Type d'analyse | Question posée | Usage industriel |
+| :--- | :--- | :--- |
+| **Meilleur cas** | Quel fait le coût le plus faible ? | Rarement utile (scénario utopique) |
+| **Pire cas** | Quel fait le coût le plus élevé ? | **Garanties strictes, systèmes critiques et RSD** |
+| **Cas moyen** | Quel fait le coût attendu ? | Prédiction de performance typique |
+
+## II.5 Introduction à l'analyse amortie (Méthode de l'agrégat, du comptable et du potentiel)
+
+L'analyse amortie évalue le coût moyen d'une opération au sein d'une **séquence complète** d'opérations dans le pire des cas, garantissant qu'un coût ponctuel élevé (comme l'éclatement d'un nœud) est absorbé par la rapidité et la frugalité des opérations environnantes.

@@ -1,0 +1,54 @@
+# Définitions et Invariants Structurels {#sec-definitions-invariants}
+
+Pour pallier la latence physique des opérations d'Entrées/Sorties ($I/O$) des disques de stockage de masse, les infrastructures distribuées modernes s'appuient sur l'organisation multi-voie immuable des B-Arbres, théorisée à l'origine par Rudolf Bayer et Edward M. McCreight.
+
+## Glossaire et Concepts Fondamentaux {#sec-glossaire-concepts}
+
+L'assimilation de la mécanique de ces structures de données de masse requiert la caractérisation formelle des concepts constitutifs de l'arbre d'indexation :
+
+*   **B-Arbre :** Arbre de recherche multi-voie équilibré conçu pour optimiser les accès sur les mémoires secondaires. Il se caractérise par un facteur de ramification élevé, minimisant la trajectoire de descente vers les données.
+*   **Nœud :** Bloc unitaire de stockage physique aligné sur la granularité des pages disques. Il contient une séquence ordonnée de clés et un tableau contigu de pointeurs associés.
+*   **Nœud Interne :** Nœud de routage situé entre la racine et les feuilles, chargé d'orienter la recherche en séparant les domaines de valeurs de ses sous-arbres enfants.
+*   **Feuille :** Nœud sommital terminal inférieur de la structure ne possédant aucun enfant. Au sein de la convention CLRS, les feuilles hébergent les clés de données brutes sans pointeurs descendants.
+*   **Sous-Arbre :** Structure arborescente descendante ancrée sur un nœud enfant spécifique, représentant un sous-ensemble partitionné du domaine de clés global.
+*   **Degré d'un Nœud :** Nombre exact de sous-arbres enfants rattachés de manière directe à un nœud donné. Au sein d'un B-Arbre, le degré d'un nœud interne est intimement lié au nombre de ses clés.
+*   **Racine :** Le nœud sommital d'entrée unique de la structure multi-voie, constituant le point de départ exclusif de toute opération d'accès, d'insertion ou de suppression.
+
+### Déclaration des Conventions de Dimensionnement
+La modélisation mathématique d'un B-Arbre s'articule autour de la confrontation de deux conventions de haut niveau :
+*   La *Convention de Knuth* définit l'arbre par son ordre maximal $m$, représentant la borne supérieure stricte du nombre d'enfants d'un nœud.
+*   La *Convention CLRS* s'appuie sur le degré minimal $t$, encadrant le remplissage inférieur des blocs physiques.
+
+L'harmonisation sémantique de ces deux approches s'exécute sous la forme d'un environnement algébrique display unifié :
+
+$$t = \lceil m/2 \rceil$$
+
+En vertu de cette propriété d'équivalence, tout nœud non racine valide doit obligatoirement contenir au moins $t-1$ clés et au plus $2t-1$ clés dans le système de fichiers.
+
+## Principes et Invariants Fondamentaux {#sec-principes-invariants}
+
+Tout B-Arbre doit maintenir trois invariants de structure stricts sous peine d'invalidation immédiate du système de stockage de l'organisation Lorein-Labs :
+
+### a. Propriété d'Équilibre Parfait
+Toutes les feuilles de la structure multi-voie résident rigoureusement à la même profondeur géométrique. L'arbre croît et décroît verticalement par sa racine, éliminant toute asymétrie de branche afin de garantir la stabilité des temps d'accès indépendamment de la clé ciblée.
+
+```{mermaid}
+%%| fig-width: 4
+%%| fig-align: center
+graph TD
+    subgraph "Illustration de l'Équilibre Parfait (Hauteur h = 2)"
+        R[Racine : Clé 20] --> N1[Enfant Gauche : Clé 10]
+        R --> N2[Enfant Droit : Clés 30, 40]
+    end
+```
+
+### b. Bornes Strictes de Remplissage des Nœuds
+Pour garantir une utilisation optimale de l'espace disque et mitiger les phénomènes de fragmentation interne, le nombre de clés $n_x$ de tout nœud $x$ est strictement encadré par des barrières algorithmiques :
+*   Si $x$ est un nœud non racine : $t - 1 \le n_x \le 2t - 1$.
+*   Si $x$ est un nœud interne non racine, son degré ou nombre d'enfants $c_x$ respecte l'inéquation : $t \le c_x \le 2t$.
+*   Un nœud contenant exactement $2t - 1$ clés est qualifié de saturé (plein) et déclenche l'exécution immédiate d'une primitive d'éclatement préventif lors de la descente.
+
+### c. Propriété d'Ordre et de Séparation des Domaines
+Les clés d'un nœud $x$ sont triées de façon permanente selon un ordre croissant strict : $x.key_1 \le x.key_2 \le \dots \le x.key_{x.n}$. Les pointeurs vers les sous-arbres enfants $x.c_i$ séparent les clés. Si une clé $k$ est située dans le domaine du sous-arbre pointé par le pointeur local $x.c_i$, alors l'invariant d'ordre impose la contrainte d'étanchéité suivante :
+
+$$x.key_{i-1} \le k \le x.key_i$$

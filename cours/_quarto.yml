@@ -1,0 +1,43 @@
+project:
+  type: book
+  output-dir: _build
+
+book:
+  title: "Complexité et Algorithmes Avancés"
+  subtitle: "Chapitre 1 — Complexité des Algorithmes · Chapitre 3 — B-Arbres"
+  author: "Université de Dschang"
+  date: "2026/2027"
+  chapters:
+    - index.md
+    - chapitre-01/introduction.md
+    - chapitre-01/01-typologie-complexite.md
+    - chapitre-01/02-cadres-analyse-algorithmique.qmd
+    - chapitre-01/03-notations-asymptotiques-formelles.md
+    - chapitre-01/04-analyse-structures-controle-recurrences.md
+    - chapitre-01/05-classification-algorithmes-classes-complexite.md
+    - chapitre-01/06-etudes-comparatives-pratiques.md
+    - chapitre-01/07-exercices-corriges.md
+    - chapitre-01/08-conclusion.qmd
+    - chapitre-01/bibliographie.md
+    - chapitre-03/introduction.md
+    - chapitre-03/01-definitions-invariants-structurels.qmd
+    - chapitre-03/02-analyse-theorique-hauteurs-couts.md
+    - chapitre-03/03-algorithmes-fondamentaux.md
+    - chapitre-03/04-variantes-industrielles-arbres-multivoies.md
+    - chapitre-03/05-applications-systemes-services-distribues.md
+    - chapitre-03/06-comparaison-arbres-equilibres.md
+    - chapitre-03/07-evaluation-globale-avantages-limites.md
+    - chapitre-03/08-exercices-application-chiffres.md
+    - chapitre-03/09-conclusion.md
+    - chapitre-03/bibliographie.md
+
+format:
+  pdf:
+    documentclass: report
+    keep-tex: true        # <-- CONSERVE LES FICHIERS .TEX POUR LE PROFESSEUR
+    pdf-engine: xelatex
+    papersize: a4
+    toc: true
+    number-sections: true
+  docx:
+    toc: true

@@ -1,0 +1,29 @@
+---
+unnumbered: true
+---
+
+# Conclusion {.unnumbered}
+
+La théorie de la complexité des algorithmes s'impose comme l'outil central et invariant pour évaluer de façon objective la qualité, la viabilité et la scalabilité d'une solution informatique. En mesurant l'usage des ressources temporelles et spatiales en fonction de la taille $n$ des données, elle permet de s'affranchir des variations éphémères du matériel (fréquence CPU, bus mémoire) ou du langage de programmation pour quantifier l'efficacité intrinsèque d'un code source. La confrontation directe entre la recherche séquentielle et la recherche dichotomique démontre qu'un choix algorithmique rigoureux surclasse de plusieurs ordres de grandeur la puissance brute d'un supercalculateur.
+
+Cependant, l'analyse asymptotique abstraite rencontre ses limites physiques face aux architectures matérielles réelles, telles que l'effet de la mémoire cache CPU ou l'overhead de sérialisation des paquets sur les interfaces de communication. Pour les ingénieurs du pôle Réseaux et Services Distribués (RSD), cette étude pose les jalons indispensables pour aborder sereinement l'analyse des paradigmes avancés (diviser pour régner, programmation dynamique, algorithmes gloutons) et permet de dimensionner correctement les protocoles pour garantir le passage à l'échelle et la tolérance aux pannes au sein des grappes de serveurs industrielles.
+
+### À retenir :
+
+```{mermaid}
+%%| fig-width: 6
+%%| fig-align: center
+graph TD
+    A[Algorithmes] --> B{Cadres d'analyse}
+    B --> B1[Meilleur cas]
+    B --> B2[Pire cas]
+    B --> B3[Cas moyen]
+    B2 --> C[Garanties RSD]
+    C --> D[Systèmes Scalables]   
+```
+
+*   **Complexité Temporelle & Spatiale :** Évaluation fine des ressources (cycles d'horloge CPU, espace RAM, overhead protocolaire) consommées en fonction de la taille $n$ de l'instance d'entrée, mesurée en nombre d'opérations élémentaires de coût invariant.
+*   **Cadres d'analyse unifiés :** Le pire des cas fournit une garantie de performance industrielle absolue (standard de sécurité critique) ; le meilleur des cas demeure un scénario idéal théorique peu informatif ; le cas moyen calcule l'espérance mathématique des performances sous l'hypothèse d'une distribution uniforme des clés.
+*   **Notations asymptotiques universelles :** $\mathcal{O}$ correspond à la borne supérieure (relation de domination), $\Omega$ à la borne inférieure asymptotique, $\Theta$ à l'ordre de grandeur exact (borne étroite), et $o$ à la domination stricte (croissance strictement plus lente).
+*   **Algorithmes récursifs :** Modélisés par des équations de récurrence complexes résolues de façon analytique par le Théorème Maître, la méthode par substitution itérative (dépliage) ou l'arbre de récurrence.
+*   **Hiérarchie des problèmes :** Démarcation stricte entre les problèmes faciles ou traitables résolubles en temps polynomial ($\text{P}$) et les classes combinatoires exponentielles ($\text{NP-Complet}$) dont l'explosion du temps d'exécution interdit toute approche par force brute à grande échelle sur les infrastructures distribuées.

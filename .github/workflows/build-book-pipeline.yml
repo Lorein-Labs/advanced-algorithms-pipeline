@@ -1,0 +1,56 @@
+name: Build Advanced Algorithms Book (PDF, LaTeX, DOCX)
+
+on:
+  push:
+    branches: [main, 'feat/**']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-book:
+    name: Quarto Book Publication Engine
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install System Dependencies (TeX Live, Pandoc)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            pandoc \
+            texlive-latex-base \
+            texlive-latex-recommended \
+            texlive-latex-extra \
+            texlive-fonts-recommended \
+            texlive-xetex
+
+      - name: Install Quarto CLI
+        run: |
+          curl -fsSL https://github.com/quarto-dev/quarto-cli/releases/download/v1.6.42/quarto-1.6.42-linux-amd64.deb -o /tmp/quarto.deb
+          sudo dpkg -i /tmp/quarto.deb
+          rm -f /tmp/quarto.deb
+
+      - name: Render Quarto Book (PDF, LaTeX .tex, DOCX)
+        working-directory: ./i18n/fr/cours
+        run: |
+          quarto render --to pdf
+          quarto render --to docx
+
+      - name: Collect and Organize Deliverables
+        run: |
+          mkdir -p final-deliverables
+          # Copier les PDF et les fichiers .tex générés par Quarto
+          find i18n/fr/cours/_build -name "*.pdf" -exec cp {} final-deliverables/ \;
+          find i18n/fr/cours/_build -name "*.tex" -exec cp {} final-deliverables/ \;
+          find i18n/fr/cours/_build -name "*.docx" -exec cp {} final-deliverables/ \;
+
+      - name: Upload Academic Deliverables Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: advanced-algorithms-academic-outputs
+          path: final-deliverables/*
+          retention-days: 30
