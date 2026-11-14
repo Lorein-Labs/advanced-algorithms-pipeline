@@ -17,11 +17,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install System Dependencies (TeX Live, Pandoc)
+      - name: Install System Dependencies (TeX Live)
         run: |
           sudo apt-get update
           sudo apt-get install -y \
-            pandoc \
             texlive-latex-base \
             texlive-latex-recommended \
             texlive-latex-extra \
@@ -31,7 +30,7 @@ jobs:
       - name: Set up Quarto CLI (Official Action)
         uses: quarto-dev/quarto-actions/setup@v2
         with:
-          version: prerelease  # Utilise une version récente supportant les extensions >= 1.9.0
+          version: release  # Utilise la dernière release stable officielle de Quarto
 
       - name: Render Quarto Book (PDF, LaTeX .tex, DOCX)
         working-directory: ./cours
