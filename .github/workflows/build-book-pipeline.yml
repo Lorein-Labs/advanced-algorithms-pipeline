@@ -35,7 +35,7 @@ jobs:
           rm -f /tmp/quarto.deb
 
       - name: Render Quarto Book (PDF, LaTeX .tex, DOCX)
-        working-directory: ./i18n/fr/cours
+        working-directory: ./cours
         run: |
           quarto render --to pdf
           quarto render --to docx
@@ -43,10 +43,10 @@ jobs:
       - name: Collect and Organize Deliverables
         run: |
           mkdir -p final-deliverables
-          # Copier les PDF et les fichiers .tex générés par Quarto
-          find i18n/fr/cours/_build -name "*.pdf" -exec cp {} final-deliverables/ \;
-          find i18n/fr/cours/_build -name "*.tex" -exec cp {} final-deliverables/ \;
-          find i18n/fr/cours/_build -name "*.docx" -exec cp {} final-deliverables/ \;
+          # Copier les PDF et les fichiers .tex générés par Quarto dans _build
+          find cours/_build -name "*.pdf" -exec cp {} final-deliverables/ \;
+          find cours/_build -name "*.tex" -exec cp {} final-deliverables/ \;
+          find cours/_build -name "*.docx" -exec cp {} final-deliverables/ \;
 
       - name: Upload Academic Deliverables Artifact
         uses: actions/upload-artifact@v4
