@@ -28,11 +28,10 @@ jobs:
             texlive-fonts-recommended \
             texlive-xetex
 
-      - name: Install Quarto CLI
-        run: |
-          curl -fsSL https://github.com/quarto-dev/quarto-cli/releases/download/v1.6.42/quarto-1.6.42-linux-amd64.deb -o /tmp/quarto.deb
-          sudo dpkg -i /tmp/quarto.deb
-          rm -f /tmp/quarto.deb
+      - name: Set up Quarto CLI (Official Action)
+        uses: quarto-dev/quarto-actions/setup@v2
+        with:
+          version: prerelease  # Utilise une version récente supportant les extensions >= 1.9.0
 
       - name: Render Quarto Book (PDF, LaTeX .tex, DOCX)
         working-directory: ./cours
@@ -43,7 +42,6 @@ jobs:
       - name: Collect and Organize Deliverables
         run: |
           mkdir -p final-deliverables
-          # Copier les PDF et les fichiers .tex générés par Quarto dans _build
           find cours/_build -name "*.pdf" -exec cp {} final-deliverables/ \;
           find cours/_build -name "*.tex" -exec cp {} final-deliverables/ \;
           find cours/_build -name "*.docx" -exec cp {} final-deliverables/ \;
